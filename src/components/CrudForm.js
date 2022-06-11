@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const initialForm = {
   name: '',
@@ -6,15 +6,44 @@ const initialForm = {
   id: null,
 };
 
-const CrudForm = () => {
+const CrudForm = ({ createData, updateData, dataToEdit, setDataToEdit }) => {
   const [form, setForm] = useState(initialForm);
-  const handleChance = (e) => {};
-  const handleSubmit = (e) => {};
-  const handleReset = (e) => {};
+
+  useEffect(() => {
+    if (dataToEdit) {
+      setForm(dataToEdit);
+    } else {
+      setForm(initialForm);
+    }
+  }, [dataToEdit]);
+
+  const handleChance = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name || !form.constellation) {
+      alert('Data Incomplete');
+      return;
+    }
+    if (form.id === null) {
+      createData(form);
+    } else {
+      updateData(form);
+    }
+    handleReset();
+  };
+  const handleReset = (e) => {
+    setForm(initialForm);
+    setDataToEdit(null);
+  };
 
   return (
     <div>
-      <h3>AgregarCrudForm</h3>
+      <h3>{dataToEdit ? 'Editar' : 'Agregar'}</h3>
       <form onSubmit={handleSubmit}>
         <input
           type='text'
@@ -27,6 +56,7 @@ const CrudForm = () => {
           type='text'
           name='constellation'
           placeholder='Constelacion'
+          value={form.constellation}
           onChange={handleChance}
         />
         <input type='submit' value='Enviar' />
