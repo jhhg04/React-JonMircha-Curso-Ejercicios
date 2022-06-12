@@ -31,18 +31,54 @@ const CrudApi = () => {
 
   const createData = (data) => {
     data.id = Date.now();
+    let options = {
+      body: data,
+      headers: { 'content-type': 'application/json' },
+    };
+    api.post(url, options).then((res) => {
+      console.log(res);
+      if (!res.err) {
+        setDb([...db, res]);
+      } else {
+        setError(res);
+      }
+    });
     setDb([...db, data]);
   };
   const updateData = (data) => {
-    let newData = db.map((el) => (el.id === data.id ? data : el));
-    setDb(newData);
+    let endpoint = `${url}/${data.id}`;
+
+    let options = {
+      body: data,
+      headers: { 'content-type': 'application/json' },
+    };
+    api.put(endpoint, options).then((res) => {
+      // console.log(res);
+      if (!res.err) {
+        let newData = db.map((el) => (el.id === data.id ? data : el));
+        setDb(newData);
+      } else {
+        setError(res);
+      }
+    });
+    setDb([...db, data]);
   };
   const deleteData = (id, name) => {
     let isDelete = window.confirm(`Are you Sure to Delete ${name} ?`);
 
     if (isDelete) {
-      let newData = db.filter((el) => el.id !== id);
-      setDb(newData);
+      let endpoint = `${url}/${id}`;
+      let options = {
+        headers: { 'content-type': 'application/json' },
+      };
+      api.del(endpoint, options).then((res) => {
+        if (!res.err) {
+          let newData = db.filter((el) => el.id !== id);
+          setDb(newData);
+        } else {
+          setError(res);
+        }
+      });
     } else {
       return;
     }
