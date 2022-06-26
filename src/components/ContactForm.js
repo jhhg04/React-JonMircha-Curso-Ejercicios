@@ -1,5 +1,7 @@
 import React from 'react';
 import { useForm } from '../hooks/useForm';
+import Loader from './Loader';
+import Message from './Message';
 
 const initialForm = {
   name: '',
@@ -100,9 +102,10 @@ const ContactForm = () => {
           required
         ></textarea>
         {errors.comments && <p style={styles}>{errors.comments}</p>}
-
         <input type='submit' value='Send' />
       </form>
+      {loading && <Loader />}
+      {response && <Message msg='Data has benn send' bgColor='#198754' />}
     </div>
   );
 };
